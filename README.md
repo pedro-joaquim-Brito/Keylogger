@@ -1,6 +1,6 @@
 # Keylogger
 
-#🧩 Projeto pessoal — aprendendo sobre eventos do sistema (teclado) e envio periódico de dados
+🧩 Projeto pessoal — aprendendo sobre eventos do sistema (teclado) e envio periódico de dados
 Acabei de desenvolver um protótipo para estudar dois conceitos importantes: escuta de eventos do sistema (handlers de teclado) e envio periódico de dados (tarefas agendadas). Foi um ótimo exercício para entender threads/timers, gravação de logs e a lógica de envio em segundo plano — tudo em ambiente controlado. ✅
 
 ⚠️ Por que isso exige responsabilidade
